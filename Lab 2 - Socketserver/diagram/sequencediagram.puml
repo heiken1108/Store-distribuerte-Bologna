@@ -1,0 +1,29 @@
+@startuml sequencediagram
+
+actor User
+participant Client
+participant Server
+
+User -> Client: Select operation (R: Read, Q: Quit)
+Client -> Client: Display list of files
+Client -> Server: "ls"
+Server -> Server: Retrieve list of files
+Server --> Client: List of files
+Client -> User: Show available files
+
+User -> Client: Select file to read
+Client -> Client: Check if file is local
+alt File is local
+    Client -> Client: Read file from local directory
+else File is remote
+    Client -> Server: Send filename
+    Server -> Server: Read file from server directory
+    alt File exists
+        Server --> Client: File content
+    else File not found
+        Server --> Client: "File not found"
+    end
+end
+Client -> User: Display file content
+
+@enduml
