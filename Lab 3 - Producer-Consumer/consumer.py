@@ -6,7 +6,7 @@ from time import sleep
 import sys
 
 
-class PCProblem:
+class Consumer:
     def __init__(self, buffer_size):
         self.buffer = Queue()
         self.empty = Semaphore(buffer_size)
@@ -63,5 +63,5 @@ class PCProblem:
 
 if __name__ == "__main__":
     print("Create PCProblem")
-    pc = PCProblem(10)
+    pc = Consumer(10)
     pc.run()
