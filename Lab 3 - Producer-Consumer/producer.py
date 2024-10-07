@@ -1,5 +1,5 @@
 from socket import socket, AF_INET, SOCK_STREAM
-import threading, time, random, json
+import threading, json
 from shared import Data
 
 class Producer():
@@ -31,8 +31,6 @@ def run_threads():
   threadOdd = threading.Thread(target=producerOdd.send_data)
   threadEven.start()
   threadOdd.start()
-  threadEven.join()
-  threadOdd.join()
 
 if __name__ == "__main__":
   run_threads()
