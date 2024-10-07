@@ -1,11 +1,7 @@
 from socket import socket, AF_INET, SOCK_STREAM
 import threading, time, random, json
-class Data():
-  def __init__(self, n: json.dumps):
-    self.n = n
+from shared import Data
 
-  def __str__(self):
-    return f"Data: {self.n}"
 class Producer():
   def __init__(self, even: bool, lock: threading.Lock, host="192.168.1.2", port=4449):
     self.host = host
