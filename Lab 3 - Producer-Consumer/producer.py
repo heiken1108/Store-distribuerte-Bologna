@@ -1,9 +1,9 @@
 from socket import socket, AF_INET, SOCK_STREAM
-import threading, time, random, json
+import threading, json
 from shared import Data
 
 class Producer():
-  def __init__(self, even: bool, lock: threading.Lock, host="192.168.1.2", port=4449):
+  def __init__(self, even: bool, lock: threading.Lock, host="Bibbebaby", port=4449):
     self.host = host
     self.port = port
     self.even = even
@@ -31,8 +31,6 @@ def run_threads():
   threadOdd = threading.Thread(target=producerOdd.send_data)
   threadEven.start()
   threadOdd.start()
-  threadEven.join()
-  threadOdd.join()
 
 if __name__ == "__main__":
   run_threads()

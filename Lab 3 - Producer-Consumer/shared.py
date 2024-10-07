@@ -1,11 +1,9 @@
-import json
 import datetime
-
 
 class Data:
     def __init__(
         self,
-        n: json.dumps,
+        n: int,
         created_by: str,
         created_at=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
     ):
