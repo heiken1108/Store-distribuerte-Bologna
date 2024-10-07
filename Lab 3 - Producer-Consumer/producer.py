@@ -14,15 +14,12 @@ class Producer():
     while True:
       n = Data(2*i if self.even else 2*i + 1, threading.get_ident())
       with self.lock:
-        print(f"Thread {self.even} is running. Lock status: {self.lock.locked()}")
         sock = socket(AF_INET, SOCK_STREAM)
         sock.connect((self.host, self.port))
         sock.send(json.dumps(n, default=lambda o: o.__dict__).encode())
         response = sock.recv(1024)
         print(response.decode())
-      print(f"Thread {self.even} is sleeping. Lock status: {self.lock.locked()}")
       i += 1
-      time.sleep(random.random())
 
 def run_threads():
   lock = threading.Lock() 
