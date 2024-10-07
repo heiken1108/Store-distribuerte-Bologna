@@ -12,7 +12,7 @@ class Producer():
   def send_data(self):
     i = 0
     while True:
-      n = Data(2*i if self.even else 2*i + 1)
+      n = Data(2*i if self.even else 2*i + 1, threading.get_ident())
       with self.lock:
         print(f"Thread {self.even} is running. Lock status: {self.lock.locked()}")
         sock = socket(AF_INET, SOCK_STREAM)
