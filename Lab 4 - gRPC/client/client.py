@@ -13,7 +13,13 @@ class Client():
     request = def_pb2.GreetRequest(name = name)
     response = self.stub.Greet(request)
     return response.message
+  
+  def run(self):
+    while True:
+      name = input('State your name: ')
+      response = self.greet(name)
+      print(response)
 
 if __name__ == '__main__':
   client = Client()
-  print(client.greet('Håkon'))
+  client.run()
