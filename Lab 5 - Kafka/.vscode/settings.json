@@ -1,0 +1,16 @@
+{
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "[java]": {
+      "editor.tabSize": 2,
+      "editor.defaultFormatter": "redhat.java"
+  },
+  "[json]": {
+      "editor.tabSize": 2,
+      "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "editor.formatOnSave": true,
+  "java.format.enabled": true,
+  //"java.format.settings.url": "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml",
+  "java.format.settings.url": "recipecalc/config/custom_formatter.xml",
+  "java.format.settings.profile": "GoogleStyle",
+}
