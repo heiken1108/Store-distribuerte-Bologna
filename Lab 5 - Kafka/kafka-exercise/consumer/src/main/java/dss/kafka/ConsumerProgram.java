@@ -108,12 +108,10 @@ public class ConsumerProgram {
             System.out.println("Received: " + record.value());
           });
         } catch (Exception e) {
-          // TODO Auto-generated catch block
           e.printStackTrace();
         }
       }
     } catch (Exception e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     } finally {
       consumer.close();
