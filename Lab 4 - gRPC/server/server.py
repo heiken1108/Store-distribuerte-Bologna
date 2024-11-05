@@ -10,6 +10,7 @@ class Server():
 
   def Greet(self, request, context):
     response = def_pb2.GreetResponse()
+    print(f"Greeting {request.name}")
     response.message = f'Hello, {request.name}'
     return response
   
