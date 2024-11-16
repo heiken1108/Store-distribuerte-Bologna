@@ -11,7 +11,7 @@ class WeatherService:
         url = f"{self.base_url}current.json?key={self.api_key}&q={city}&aqi=no"
         response = requests.get(url)
         response.raise_for_status()
-        
+
         return response.json()
     
     def get_forecast_daily(self, city, end_date: date):
@@ -52,7 +52,7 @@ class WeatherService:
         res = response.json()
         forecasts = res['forecast']['forecastday']
         forecasts_trimmed = []
-        for index, forecast in enumerate(forecasts):
+        for forecast in forecasts:
             hours = forecast['hour']
             for hour in hours:
                 if hour['time_epoch'] >= now_epoch_time and hour['time_epoch'] <= epoch_end_time:
