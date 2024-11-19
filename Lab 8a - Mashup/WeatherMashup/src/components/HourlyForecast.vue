@@ -48,7 +48,7 @@
         </div>
       </div>
     </div>
-    <div v-if="loading">
+    <div v-if="loading" class="center">
       <LoadingSymbol />
     </div>
   </div>
@@ -56,7 +56,7 @@
 
 <script setup lang="ts">
 import { getHourlyForecast } from '../services/weatherService'
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { DateHours } from '../types'
 import LoadingSymbol from './LoadingSymbol.vue'
 
@@ -66,6 +66,8 @@ const loading = ref(false)
 const props = defineProps<{
   location: string
 }>()
+
+onMounted(() => updateForecast())
 
 watch(props, async () => await updateForecast())
 
@@ -139,5 +141,12 @@ const updateForecast = async () => {
 
 .relative {
   position: relative;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 }
 </style>

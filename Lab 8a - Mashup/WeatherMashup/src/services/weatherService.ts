@@ -1,46 +1,16 @@
 import axios from 'axios'
-import { WeatherData, DateHours } from '../types'
+import {
+    WeatherAPIData,
+    CombinedWeatherData,
+    DateHours,
+    OpenWeatherApiResponse,
+    OpenWeatherCurrentResponse,
+    CombinedWeatherDataCurrent,
+} from '../types'
 
 const API_KEYS = {
     openWeatherMap: import.meta.env.VITE_OPENWEATHERMAP_KEY,
     weatherAPI: import.meta.env.VITE_WEATHERAPI_KEY,
-}
-
-interface OpenWeatherData {
-    list: {
-        dt_txt: string
-        main: {
-            temp: number
-        }
-        weather: {
-            description: string
-        }[]
-    }[]
-}
-
-interface WeatherAPIData {
-    current: {
-        condition: {
-            text: string
-        }
-    }
-    forecast: {
-        forecastday: {
-            date: string
-            day: {
-                maxtemp_c: number
-                mintemp_c: number
-                condition: {
-                    text: string
-                }
-            }
-        }[]
-    }
-}
-
-export interface CombinedWeatherData {
-    openWeather: OpenWeatherData
-    weatherAPI: WeatherAPIData
 }
 
 export const getWeatherData = async (
@@ -48,11 +18,35 @@ export const getWeatherData = async (
 ): Promise<CombinedWeatherData | null> => {
     try {
         const [openWeatherResponse, weatherAPIResponse] = await Promise.all([
-            axios.get<OpenWeatherData>(
+            axios.get<OpenWeatherApiResponse>(
                 `https://api.openweathermap.org/data/2.5/forecast?q=${location}&appid=${API_KEYS.openWeatherMap}&units=metric`
             ),
             axios.get<WeatherAPIData>(
-                `https://api.weatherapi.com/v1/forecast.json?key=${API_KEYS.weatherAPI}&q=${location}&days=5`
+                `https://api.weatherapi.com/v1/forecast.json?key=${API_KEYS.weatherAPI}&q=${location}&days=2&unixdt=${Date.now()}`
+            ),
+        ])
+
+        console.log(openWeatherResponse.data, weatherAPIResponse.data)
+        return {
+            openWeather: openWeatherResponse.data,
+            weatherAPI: weatherAPIResponse.data,
+        }
+    } catch (error) {
+        console.error('Error fetching weather data:', error)
+        return null
+    }
+}
+
+export const getCurrentConditions = async (
+    location: string
+): Promise<CombinedWeatherDataCurrent | null> => {
+    try {
+        const [openWeatherResponse, weatherAPIResponse] = await Promise.all([
+            axios.get<OpenWeatherCurrentResponse>(
+                `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${API_KEYS.openWeatherMap}&units=metric`
+            ),
+            axios.get<WeatherAPIData>(
+                `https://api.weatherapi.com/v1/forecast.json?key=${API_KEYS.weatherAPI}&q=${location}&days=2&unixdt=${Date.now()}`
             ),
         ])
 
@@ -72,7 +66,7 @@ export const getHourlyForecast = async (
     unixTimestamp: number
 ): Promise<DateHours | null> => {
     try {
-        const response = await axios.get<WeatherData>(
+        const response = await axios.get<WeatherAPIData>(
             `https://api.weatherapi.com/v1/forecast.json?key=${API_KEYS.weatherAPI}&q=${location}&days=2&unixdt=${Date.now()}`
         )
 

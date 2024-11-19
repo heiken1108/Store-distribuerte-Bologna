@@ -2,6 +2,8 @@
 import { ref } from 'vue'
 import HourlyForecast from './HourlyForecast.vue'
 import { useLocationStore } from '../stores/locationStore'
+import CurrentConditions from './CurrentConditions.vue'
+import DayOutlook from './DayOutlook.vue'
 
 const locationStore = useLocationStore()
 const emit = defineEmits<{
@@ -10,11 +12,14 @@ const emit = defineEmits<{
 
 const activeTab = ref(0)
 
-const tabs = [{ title: 'Hourly Forecast' }, { title: 'TulleKomponent' }]
+const tabs = [
+  { title: 'Hourly Forecast' },
+  { title: 'Current Condition' },
+  { title: 'Day Outlook' },
+]
 
 const setActiveTab = (index: number) => {
   activeTab.value = index
-  console.log('Tab changed: ' + activeTab.value)
   emit('tabChanged', index)
 }
 </script>
@@ -37,9 +42,14 @@ const setActiveTab = (index: number) => {
     <!-- Tab Content using named slots -->
     <div class="tab-content">
       <HourlyForecast
-        v-show="activeTab === 0"
+        v-if="activeTab === 0"
         :location="locationStore.location"
       />
+      <CurrentConditions
+        v-if="activeTab === 1"
+        :location="locationStore.location"
+      />
+      <DayOutlook v-if="activeTab === 2" :location="locationStore.location" />
     </div>
   </div>
 </template>

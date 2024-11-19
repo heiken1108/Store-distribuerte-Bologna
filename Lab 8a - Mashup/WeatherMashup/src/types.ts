@@ -124,12 +124,127 @@ interface DailyForecast {
     hour: HourlyWeather[]
 }
 
-interface WeatherData {
+interface WeatherAPIData {
     location: WeatherLocation
     current: CurrentWeather
     forecast: {
         forecastday: DailyForecast[]
     }
+}
+
+interface OpenWeatherApiResponse {
+    cod: string
+    message: number
+    cnt: number
+    list: OpenWeatherData[]
+}
+
+interface OpenWeatherData {
+    dt: number // Unix timestamp
+    main: OpenMainWeatherData
+    weather: OpenWeatherCondition[]
+    clouds: OpenClouds
+    wind: OpenWind
+    visibility: number // in meters
+    pop: number // Probability of precipitation
+    rain?: OpenRainData // Optional because not always present
+    sys: OpenSys
+    dt_txt: string // Forecast time in ISO format
+}
+
+interface OpenMainWeatherData {
+    temp: number // Current temperature
+    feels_like: number // Feels-like temperature
+    temp_min: number // Minimum temperature
+    temp_max: number // Maximum temperature
+    pressure: number // Atmospheric pressure at sea level
+    sea_level?: number // Optional sea-level atmospheric pressure
+    grnd_level?: number // Optional ground-level atmospheric pressure
+    humidity: number // Humidity percentage
+    temp_kf?: number // Internal parameter, temp adjustment
+}
+
+interface OpenWeatherCondition {
+    id: number // Weather condition ID
+    main: string // Group of weather parameters (e.g., Rain, Snow, Clouds)
+    description: string // Description of the weather
+    icon: string // Weather icon ID
+}
+
+interface OpenClouds {
+    all: number // Cloudiness percentage
+}
+
+interface OpenWind {
+    speed: number // Wind speed in m/s
+    deg: number // Wind direction in degrees
+    gust?: number // Optional gust speed in m/s
+}
+
+interface OpenRainData {
+    '1h'?: number
+    '3h'?: number
+}
+
+interface OpenSys {
+    pod: string // Part of the day (n = night, d = day)
+}
+
+interface OpenWeatherCurrentResponse {
+    coord: {
+        lon: number
+        lat: number
+    }
+    weather: {
+        id: number
+        main: string
+        description: string
+        icon: string
+    }[]
+    base: string
+    main: {
+        temp: number
+        feels_like: number
+        temp_min: number
+        temp_max: number
+        pressure: number
+        humidity: number
+        sea_level?: number
+        grnd_level?: number
+    }
+    visibility: number
+    wind: {
+        speed: number
+        deg: number
+        gust?: number
+    }
+    rain?: {
+        '1h': number
+    }
+    clouds: {
+        all: number
+    }
+    dt: number
+    sys: {
+        type?: number
+        id?: number
+        country: string
+        sunrise: number
+        sunset: number
+    }
+    timezone: number
+    id: number
+    name: string
+    cod: number
+}
+interface CombinedWeatherData {
+    openWeather: OpenWeatherApiResponse
+    weatherAPI: WeatherAPIData
+}
+
+interface CombinedWeatherDataCurrent {
+    openWeather: OpenWeatherCurrentResponse
+    weatherAPI: WeatherAPIData
 }
 
 interface DateHours {
@@ -143,6 +258,11 @@ export type {
     HourlyWeather,
     AstronomicalData,
     DailyForecast,
-    WeatherData,
+    WeatherAPIData,
     DateHours,
+    OpenWeatherData,
+    CombinedWeatherData,
+    OpenWeatherApiResponse,
+    OpenWeatherCurrentResponse,
+    CombinedWeatherDataCurrent,
 }
