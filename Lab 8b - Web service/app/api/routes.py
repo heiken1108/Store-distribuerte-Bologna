@@ -57,7 +57,7 @@ async def get_current_weather(city: str):
 	except Exception as e:
 		raise HTTPException(status_code=500, detail=str(e))
 
-#Example-url: localhost:8000/forecast/daily/Bologna?end_date=2021-09-10
+#Example-url: localhost:8000/forecast/daily/Bologna?end_date=2024-11-16
 @router.get("/forecast/daily/{city}")
 async def get_weather_forecast_daily(city: str, end_date: date):
 	try:
@@ -81,7 +81,7 @@ def make_daily_forecasts(data):
 	return forecasts
 	
 
-#Example-url: localhost:8000/forecast/hourly/Bologna?end_datetime=2021-09-10T00:00:00
+#Example-url: localhost:8000/forecast/hourly/Bologna?end_datetime=2024-11-17T00:00:00
 @router.get("/forecast/hourly/{city}")
 async def get_weather_forecast_hourly(city: str, end_datetime: datetime):
 	try:
