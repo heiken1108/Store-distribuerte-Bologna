@@ -1,7 +1,7 @@
 <template>
   <div class="weather-component">
     <input
-      v-model="location"
+      v-model.lazy="location"
       type="text"
       placeholder="Enter location"
       class="location-input"
@@ -9,53 +9,23 @@
     />
     <button class="fetch-button" @click="fetchWeather">Get Weather</button>
 
-    <div v-if="weatherData" class="weather-data">
-      <h2>Weather for {{ location }}</h2>
-
-      <!-- OpenWeather Data -->
-      <div class="weather-section">
-        <h3>OpenWeatherMap 5-day Forecast</h3>
-        <ul>
-          <li
-            v-for="(entry, index) in weatherData.openWeather.list"
-            :key="index"
-          >
-            <strong>{{ entry.dt_txt }}</strong
-            >: {{ entry.main.temp }}°C,
-            {{ entry.weather[0].description }}
-          </li>
-        </ul>
-      </div>
-
-      <!-- WeatherAPI Data -->
-      <div class="weather-section">
-        <h3>WeatherAPI Forecast</h3>
-        <ul>
-          <li
-            v-for="(forecast, index) in weatherData.weatherAPI.forecast
-              .forecastday"
-            :key="index"
-          >
-            <strong>{{ forecast.date }}</strong
-            >: {{ forecast.day.maxtemp_c }}°C / {{ forecast.day.mintemp_c }}°C,
-            {{ forecast.day.condition.text }}
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <div v-else-if="loading" class="loading">Loading...</div>
-    <div v-else class="error">No data available. Try another location.</div>
+    <TabSystem />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, provide, ref } from 'vue'
 import { getWeatherData, CombinedWeatherData } from '../services/weatherService'
+import TabSystem from './TabSystem.vue'
 
 const location = ref('') // User input
 const weatherData = ref<CombinedWeatherData | null>(null) // Weather data
 const loading = ref(false) // Loading state
+
+provide(
+  'location',
+  computed(() => location)
+)
 
 const fetchWeather = async () => {
   if (!location.value.trim()) return
@@ -66,6 +36,7 @@ const fetchWeather = async () => {
   try {
     const data = await getWeatherData(location.value.trim())
     weatherData.value = data
+    console.log(data)
   } catch (error) {
     console.error('Error fetching weather:', error)
   } finally {
