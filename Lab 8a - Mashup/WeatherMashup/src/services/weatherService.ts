@@ -6,6 +6,7 @@ import {
     OpenWeatherApiResponse,
     OpenWeatherCurrentResponse,
     CombinedWeatherDataCurrent,
+    CombinedFiveDayForecast,
 } from '../types'
 
 const API_KEYS = {
@@ -85,6 +86,40 @@ export const getHourlyForecast = async (
         return dateHours
     } catch (error) {
         console.error('Error fetching hourly forecast:', error)
+        return null
+    }
+}
+
+export const getFiveDayForecast = async (
+    location: string
+): Promise<CombinedFiveDayForecast | null> => {
+    try {
+        const response1 = await axios.get<OpenWeatherApiResponse>(
+            `https://api.openweathermap.org/data/2.5/forecast?q=${location}&appid=${API_KEYS.openWeatherMap}&units=metric`
+        )
+        const response2 = await axios.get<WeatherAPIData>(
+            `https://api.weatherapi.com/v1/forecast.json?key=${API_KEYS.weatherAPI}&q=${location}&days=6&unixdt=${Date.now()}`
+        )
+
+        const groupedByHour: CombinedFiveDayForecast = {}
+
+        response1.data.list.forEach((entry) => {
+            groupedByHour[entry.dt] = {
+                openWeather: entry,
+                weatherAPI: null,
+            }
+        })
+
+        response2.data.forecast.forecastday.forEach((entry) => {
+            entry.hour.forEach((hour) => {
+                if (hour.time_epoch.toString() in groupedByHour)
+                    groupedByHour[hour.time_epoch].weatherAPI = hour
+            })
+        })
+
+        return groupedByHour
+    } catch (error) {
+        console.error('Error fetching five day forecast:', error)
         return null
     }
 }

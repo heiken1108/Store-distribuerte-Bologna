@@ -251,6 +251,13 @@ interface DateHours {
     [date: string]: HourlyWeather[]
 }
 
+interface CombinedFiveDayForecast {
+    [unix_timestamp: number]: {
+        openWeather: OpenWeatherData | null
+        weatherAPI: HourlyWeather | null
+    }
+}
+
 export type {
     WeatherLocation,
     WeatherCondition,
@@ -265,4 +272,5 @@ export type {
     OpenWeatherApiResponse,
     OpenWeatherCurrentResponse,
     CombinedWeatherDataCurrent,
+    CombinedFiveDayForecast,
 }

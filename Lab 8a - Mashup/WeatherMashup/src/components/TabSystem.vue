@@ -13,9 +13,9 @@ const emit = defineEmits<{
 const activeTab = ref(0)
 
 const tabs = [
-  { title: 'Hourly Forecast' },
   { title: 'Current Condition' },
-  { title: 'Day Outlook' },
+  { title: 'Hourly Forecast' },
+  { title: '5 Day Outlook' },
 ]
 
 const setActiveTab = (index: number) => {
@@ -41,11 +41,11 @@ const setActiveTab = (index: number) => {
 
     <!-- Tab Content using named slots -->
     <div class="tab-content">
-      <HourlyForecast
+      <CurrentConditions
         v-if="activeTab === 0"
         :location="locationStore.location"
       />
-      <CurrentConditions
+      <HourlyForecast
         v-if="activeTab === 1"
         :location="locationStore.location"
       />
