@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { WeatherData, DateHours } from '../types'
 
 const API_KEYS = {
     openWeatherMap: import.meta.env.VITE_OPENWEATHERMAP_KEY,
@@ -6,32 +7,21 @@ const API_KEYS = {
 }
 
 interface OpenWeatherData {
-    weather: {
-        description: string
-        icon: string
+    list: {
+        dt_txt: string
+        main: {
+            temp: number
+        }
+        weather: {
+            description: string
+        }[]
     }[]
-    main: {
-        temp: number
-        feels_like: number
-        humidity: number
-    }
-    wind: {
-        speed: number
-    }
 }
 
 interface WeatherAPIData {
     current: {
         condition: {
             text: string
-            icon: string
-            temp_c: string
-            last_updated: string
-            wind_kph: string
-            wind_dir: string
-            humidity: string
-            feelslike_c: string
-            uv: string
         }
     }
     forecast: {
@@ -73,6 +63,34 @@ export const getWeatherData = async (
         }
     } catch (error) {
         console.error('Error fetching weather data:', error)
+        return null
+    }
+}
+
+export const getHourlyForecast = async (
+    location: string,
+    unixTimestamp: number
+): Promise<DateHours | null> => {
+    try {
+        const response = await axios.get<WeatherData>(
+            `https://api.weatherapi.com/v1/forecast.json?key=${API_KEYS.weatherAPI}&q=${location}&days=2&unixdt=${Date.now()}`
+        )
+
+        const dateHours: DateHours = {}
+
+        response.data?.forecast.forecastday.forEach((day) => {
+            const filteredHours = day.hour.filter(
+                (hour) => hour.time_epoch > Math.floor(unixTimestamp / 1000)
+            )
+
+            if (filteredHours.length > 0) {
+                dateHours[day.date] = filteredHours
+            }
+        })
+
+        return dateHours
+    } catch (error) {
+        console.error('Error fetching hourly forecast:', error)
         return null
     }
 }
