@@ -1,6 +1,8 @@
 <template>
   <div>
-    <h2>{{ 'Hourly forecast for ' + location }}</h2>
+    <h2>
+      {{ 'Hourly forecast for ' + (location.length > 1 ? location : '...') }}
+    </h2>
     <div v-if="hourlyForecast" class="forecast-container">
       <div
         v-for="(day, name, idx) in hourlyForecast"
@@ -21,7 +23,7 @@
           <span class="relative">Precipitation</span>
           <span class="relative">Wind (gust)</span>
         </div>
-        <div v-for="hour in day" class="hour-container">
+        <div v-for="(hour, index) in day" :key="index" class="hour-container">
           <div class="weather-info-container">
             <span>
               {{
@@ -46,34 +48,36 @@
         </div>
       </div>
     </div>
-    <div v-else>
-      <p>Loading hourly forecast...</p>
+    <div v-if="loading">
+      <LoadingSymbol />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { getHourlyForecast } from '../services/weatherService'
-import { onMounted, Ref, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { DateHours } from '../types'
+import LoadingSymbol from './LoadingSymbol.vue'
 
 const hourlyForecast = ref<DateHours | null>(null)
+const loading = ref(false)
 
 const props = defineProps<{
-  location: Ref<string>
+  location: string
 }>()
 
-onMounted(async () => {
-  await updateForecast()
-})
+watch(props, async () => await updateForecast())
 
-watch(props.location, async () => await updateForecast())
-
-const updateForecast = async () =>
-  (hourlyForecast.value = await getHourlyForecast(
-    props.location.value,
-    Date.now()
-  ))
+const updateForecast = async () => {
+  console.log('Fetching hourly forecast')
+  loading.value = true
+  try {
+    hourlyForecast.value = await getHourlyForecast(props.location, Date.now())
+  } finally {
+    loading.value = false
+  }
+}
 </script>
 <style lang="css" scoped>
 .column-description {

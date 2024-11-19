@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { Ref, ref, inject } from 'vue'
+import { ref } from 'vue'
 import HourlyForecast from './HourlyForecast.vue'
+import { useLocationStore } from '../stores/locationStore'
 
+const locationStore = useLocationStore()
 const emit = defineEmits<{
   (e: 'tabChanged', index: number): void
 }>()
@@ -15,8 +17,6 @@ const setActiveTab = (index: number) => {
   console.log('Tab changed: ' + activeTab.value)
   emit('tabChanged', index)
 }
-
-const location: Ref<string> = inject('location')
 </script>
 
 <template>
@@ -36,7 +36,10 @@ const location: Ref<string> = inject('location')
 
     <!-- Tab Content using named slots -->
     <div class="tab-content">
-      <HourlyForecast :location="location" v-show="activeTab === 0" />
+      <HourlyForecast
+        v-show="activeTab === 0"
+        :location="locationStore.location"
+      />
     </div>
   </div>
 </template>

@@ -5,43 +5,27 @@
       type="text"
       placeholder="Enter location"
       class="location-input"
-      @keyup.enter="fetchWeather"
+      @keyup.enter="setLocation"
     />
-    <button class="fetch-button" @click="fetchWeather">Get Weather</button>
+    <button class="fetch-button" @click="setLocation">Get Weather</button>
 
     <TabSystem />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, provide, ref } from 'vue'
-import { getWeatherData, CombinedWeatherData } from '../services/weatherService'
+import { ref } from 'vue'
 import TabSystem from './TabSystem.vue'
+import { useLocationStore } from '../stores/locationStore'
 
-const location = ref('') // User input
-const weatherData = ref<CombinedWeatherData | null>(null) // Weather data
-const loading = ref(false) // Loading state
+const location = ref('')
 
-provide(
-  'location',
-  computed(() => location)
-)
+const locationStore = useLocationStore()
 
-const fetchWeather = async () => {
+const setLocation = async () => {
   if (!location.value.trim()) return
 
-  loading.value = true
-  weatherData.value = null
-
-  try {
-    const data = await getWeatherData(location.value.trim())
-    weatherData.value = data
-    console.log(data)
-  } catch (error) {
-    console.error('Error fetching weather:', error)
-  } finally {
-    loading.value = false
-  }
+  locationStore.setLocation(location.value)
 }
 </script>
 
@@ -65,22 +49,5 @@ const fetchWeather = async () => {
   padding: 8px 16px;
   font-size: 16px;
   cursor: pointer;
-}
-
-.weather-data {
-  margin-top: 20px;
-  text-align: left;
-}
-
-.weather-section {
-  margin-bottom: 20px;
-}
-
-.loading {
-  color: blue;
-}
-
-.error {
-  color: red;
 }
 </style>
