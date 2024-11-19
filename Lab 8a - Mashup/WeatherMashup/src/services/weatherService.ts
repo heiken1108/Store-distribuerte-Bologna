@@ -6,21 +6,32 @@ const API_KEYS = {
 }
 
 interface OpenWeatherData {
-    list: {
-        dt_txt: string
-        main: {
-            temp: number
-        }
-        weather: {
-            description: string
-        }[]
+    weather: {
+        description: string
+        icon: string
     }[]
+    main: {
+        temp: number
+        feels_like: number
+        humidity: number
+    }
+    wind: {
+        speed: number
+    }
 }
 
 interface WeatherAPIData {
     current: {
         condition: {
             text: string
+            icon: string
+            temp_c: string
+            last_updated: string
+            wind_kph: string
+            wind_dir: string
+            humidity: string
+            feelslike_c: string
+            uv: string
         }
     }
     forecast: {
