@@ -15,7 +15,7 @@ const activeTab = ref(0)
 const tabs = [
   { title: 'Current Condition' },
   { title: 'Hourly Forecast' },
-  { title: 'Day Outlook' },
+  { title: '5 Day Outlook' },
 ]
 
 const setActiveTab = (index: number) => {
