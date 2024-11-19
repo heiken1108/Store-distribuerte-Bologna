@@ -1,7 +1,12 @@
 <template>
   <div>
     <h2>
-      {{ '5 day outlook for ' + (location.length > 1 ? location : '...') }}
+      {{
+        '5 day outlook for ' +
+        (location.length > 1
+          ? location.charAt(0).toUpperCase() + location.slice(1)
+          : '...')
+      }}
     </h2>
   </div>
 </template>
@@ -10,22 +15,27 @@
 import { onMounted, ref, watch } from 'vue'
 import { getWeatherData } from '../services/weatherService'
 import { CombinedWeatherData } from '../types'
+import { useLocationStore } from '../stores/locationStore'
 
-const weather = ref<CombinedWeatherData | null>(
-  localStorage.getItem('weatherData')
-    ? JSON.parse(localStorage.getItem('weatherData')!)
-    : null
-)
-const loading = ref(false)
+const locationStore = useLocationStore()
 
 const props = defineProps<{
   location: string
 }>()
 
+const weather = ref<CombinedWeatherData | null>(
+  props.location.length > 0
+    ? localStorage.getItem('weatherData')
+      ? JSON.parse(localStorage.getItem('weatherData')!)
+      : null
+    : null
+)
+const loading = ref(false)
+
 onMounted(() => {
   if (
-    weather.value?.weatherAPI.location.name !==
-    props.location.charAt(0).toUpperCase() + props.location.slice(1)
+    props.location.length > 0 &&
+    locationStore.outlookLocation !== props.location
   ) {
     updateForecast()
   }
@@ -39,6 +49,7 @@ const updateForecast = async () => {
   try {
     weather.value = await getWeatherData(props.location)
     localStorage.setItem('weatherData', JSON.stringify(weather.value))
+    locationStore.setOutlookLocation()
     console.log(weather.value)
   } finally {
     loading.value = false

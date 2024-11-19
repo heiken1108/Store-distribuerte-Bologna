@@ -132,6 +132,11 @@ interface WeatherAPIData {
     }
 }
 
+interface WeatherApiCurrentResponse {
+    location: WeatherLocation
+    current: CurrentWeather
+}
+
 interface OpenWeatherApiResponse {
     cod: string
     message: number
@@ -244,7 +249,7 @@ interface CombinedWeatherData {
 
 interface CombinedWeatherDataCurrent {
     openWeather: OpenWeatherCurrentResponse
-    weatherAPI: WeatherAPIData
+    weatherAPI: WeatherApiCurrentResponse
 }
 
 interface DateHours {
@@ -265,4 +270,5 @@ export type {
     OpenWeatherApiResponse,
     OpenWeatherCurrentResponse,
     CombinedWeatherDataCurrent,
+    WeatherApiCurrentResponse,
 }

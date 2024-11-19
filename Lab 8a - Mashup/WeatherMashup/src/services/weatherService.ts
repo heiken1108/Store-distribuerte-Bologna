@@ -6,6 +6,7 @@ import {
     OpenWeatherApiResponse,
     OpenWeatherCurrentResponse,
     CombinedWeatherDataCurrent,
+    WeatherApiCurrentResponse,
 } from '../types'
 
 const API_KEYS = {
@@ -22,7 +23,7 @@ export const getWeatherData = async (
                 `https://api.openweathermap.org/data/2.5/forecast?q=${location}&appid=${API_KEYS.openWeatherMap}&units=metric`
             ),
             axios.get<WeatherAPIData>(
-                `https://api.weatherapi.com/v1/forecast.json?key=${API_KEYS.weatherAPI}&q=${location}&days=2&unixdt=${Date.now()}`
+                `https://api.weatherapi.com/v1/forecast.json?key=${API_KEYS.weatherAPI}&q=${location}&days=5&unixdt=${Date.now()}`
             ),
         ])
 
@@ -45,8 +46,8 @@ export const getCurrentConditions = async (
             axios.get<OpenWeatherCurrentResponse>(
                 `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${API_KEYS.openWeatherMap}&units=metric`
             ),
-            axios.get<WeatherAPIData>(
-                `https://api.weatherapi.com/v1/forecast.json?key=${API_KEYS.weatherAPI}&q=${location}&days=2&unixdt=${Date.now()}`
+            axios.get<WeatherApiCurrentResponse>(
+                `https://api.weatherapi.com/v1/current.json?key=${API_KEYS.weatherAPI}&q=${location}`
             ),
         ])
 
@@ -88,3 +89,12 @@ export const getHourlyForecast = async (
         return null
     }
 }
+
+// export const getFiveDayForecast = async (location: string): Promise<any> => {
+//     try {
+//         const response = await axios.get<OpenWeatherApiResponse>(
+//             `https://api.openweathermap.org/data/2.5/forecast?q=${location}&appid=${API_KEYS.openWeatherMap}&units=metric`
+//         )
+
+//         return response.data
+//     }

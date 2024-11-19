@@ -1,7 +1,12 @@
 <template>
   <div>
     <h2>
-      {{ 'Hourly forecast for ' + (location.length > 1 ? location : '...') }}
+      {{
+        'Hourly forecast for ' +
+        (location.length > 1
+          ? location.charAt(0).toUpperCase() + location.slice(1)
+          : '...')
+      }}
     </h2>
     <div v-if="hourlyForecast" class="forecast-container">
       <div
@@ -59,15 +64,31 @@ import { getHourlyForecast } from '../services/weatherService'
 import { onMounted, ref, watch } from 'vue'
 import { DateHours } from '../types'
 import LoadingSymbol from './LoadingSymbol.vue'
+import { useLocationStore } from '../stores/locationStore'
 
-const hourlyForecast = ref<DateHours | null>(null)
-const loading = ref(false)
+const locationStore = useLocationStore()
 
 const props = defineProps<{
   location: string
 }>()
 
-onMounted(() => updateForecast())
+const hourlyForecast = ref<DateHours | null>(
+  props.location.length > 0
+    ? localStorage.getItem('hourlyForecast')
+      ? JSON.parse(localStorage.getItem('hourlyForecast')!)
+      : null
+    : null
+)
+const loading = ref(false)
+
+onMounted(() => {
+  if (
+    props.location.length > 0 &&
+    locationStore.hourlyLocation !== props.location
+  ) {
+    updateForecast()
+  }
+})
 
 watch(props, async () => await updateForecast())
 
@@ -76,6 +97,8 @@ const updateForecast = async () => {
   loading.value = true
   try {
     hourlyForecast.value = await getHourlyForecast(props.location, Date.now())
+    localStorage.setItem('hourlyForecast', JSON.stringify(hourlyForecast.value))
+    locationStore.setHourlyLocation()
   } finally {
     loading.value = false
   }
