@@ -1,7 +1,12 @@
 <template>
   <div>
     <h2>
-      {{ '5 day outlook for ' + (location.length > 1 ? location : '...') }}
+      {{
+        '5 day outlook for ' +
+        (location.length > 1
+          ? location.charAt(0).toUpperCase() + location.slice(1)
+          : '...')
+      }}
     </h2>
     <div v-if="weather" class="forecast-container">
       <table class="table">
@@ -52,15 +57,31 @@ import { onMounted, ref, watch } from 'vue'
 import { getFiveDayForecast } from '../services/weatherService'
 import { CombinedFiveDayForecast } from '../types'
 import LoadingSymbol from './LoadingSymbol.vue'
+import { useLocationStore } from '../stores/locationStore'
 
-const weather = ref<CombinedFiveDayForecast | null>(null)
-const loading = ref(false)
+const locationStore = useLocationStore()
 
 const props = defineProps<{
   location: string
 }>()
 
-onMounted(() => updateForecast())
+const weather = ref<CombinedFiveDayForecast | null>(
+  props.location.length > 0
+    ? localStorage.getItem('weatherData')
+      ? JSON.parse(localStorage.getItem('weatherData')!)
+      : null
+    : null
+)
+const loading = ref(false)
+
+onMounted(() => {
+  if (
+    props.location.length > 0 &&
+    locationStore.outlookLocation !== props.location
+  ) {
+    updateForecast()
+  }
+})
 
 watch(props, async () => await updateForecast())
 
@@ -69,6 +90,8 @@ const updateForecast = async () => {
   loading.value = true
   try {
     weather.value = await getFiveDayForecast(props.location)
+    localStorage.setItem('weatherData', JSON.stringify(weather.value))
+    locationStore.setOutlookLocation()
     console.log(weather.value)
   } finally {
     loading.value = false

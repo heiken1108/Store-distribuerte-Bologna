@@ -1,7 +1,12 @@
 <template>
   <div>
     <h2>
-      {{ 'Current condition for ' + (location.length > 1 ? location : '...') }}
+      {{
+        'Current conditions for ' +
+        (location.length > 1
+          ? location.charAt(0).toUpperCase() + location.slice(1)
+          : '...')
+      }}
     </h2>
     <div v-if="weather" class="wrapper">
       <div
@@ -31,21 +36,24 @@ import { ref, computed, watch, onMounted } from 'vue'
 import { getCurrentConditions } from '../services/weatherService'
 import { CombinedWeatherDataCurrent } from '../types'
 
-const weather = ref<CombinedWeatherDataCurrent | null>(
-  localStorage.getItem('currentConditions')
-    ? JSON.parse(localStorage.getItem('currentConditions')!)
-    : null
-)
-const loading = ref(false)
-
 const props = defineProps<{
   location: string
 }>()
 
+const weather = ref<CombinedWeatherDataCurrent | null>(
+  props.location.length > 0
+    ? localStorage.getItem('currentConditions')
+      ? JSON.parse(localStorage.getItem('currentConditions')!)
+      : null
+    : null
+)
+const loading = ref(false)
+
 onMounted(() => {
   if (
+    props.location.length > 0 &&
     weather.value?.openWeather.name !==
-    props.location.charAt(0).toUpperCase() + props.location.slice(1)
+      props.location.charAt(0).toUpperCase() + props.location.slice(1)
   ) {
     updateForecast()
   }
@@ -54,7 +62,7 @@ onMounted(() => {
 watch(props, async () => await updateForecast())
 
 const updateForecast = async () => {
-  console.log('Fetching weather data')
+  console.log('Fetching current conditions')
   loading.value = true
   try {
     weather.value = await getCurrentConditions(props.location)
