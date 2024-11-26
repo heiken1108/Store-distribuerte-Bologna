@@ -2,14 +2,18 @@ version: '3.8'
 
 services:
     user-service:
-        build: ./user-service
+        build:
+            context: ./user-service
+            dockerfile: Dockerfile
         ports:
             - '3001:3001'
         environment:
             - PORT=3001
 
     order-service:
-        build: ./order-service
+        build:
+            context: ./order-service
+            dockerfile: Dockerfile
         ports:
             - '3002:3002'
         environment:
