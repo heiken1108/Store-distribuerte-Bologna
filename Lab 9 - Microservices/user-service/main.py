@@ -2,6 +2,7 @@ import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from db import UserDatabase
+import requests
 
 app = Flask(__name__)
 CORS(app)
@@ -27,6 +28,11 @@ def get_user_by_id(user_id):
 	try:
 		user = database.get_user_by_id(user_id)
 		if user:
+			orders = requests.get(f'http://order-service:3002/orders/user/{user_id}').json()
+			if orders:
+				user['orders'] = orders
+			else:
+				user['orders'] = []
 			return jsonify(user), 200
 		else:
 			return jsonify({'Error': 'User not found'}), 404

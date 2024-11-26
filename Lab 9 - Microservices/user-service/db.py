@@ -1,5 +1,4 @@
 import sqlite3
-import os
 
 class UserDatabase():
 	def __init__(self, db_name='users.db'):

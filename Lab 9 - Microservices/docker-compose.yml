@@ -9,6 +9,8 @@ services:
             - '3001:3001'
         environment:
             - PORT=3001
+        networks:
+            - microservices-network
 
     order-service:
         build:
@@ -18,3 +20,8 @@ services:
             - '3002:3002'
         environment:
             - PORT=3002
+        networks:
+            - microservices-network
+
+networks:
+    microservices-network:

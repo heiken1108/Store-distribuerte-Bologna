@@ -15,6 +15,7 @@ class OrderDatabase():
 			connection.execute('''
 				CREATE TABLE IF NOT EXISTS orders (
 					order_id INTEGER PRIMARY KEY AUTOINCREMENT,
+					user_id INTEGER NOT NULL,
 					product TEXT NOT NULL,
 					quantity INTEGER NOT NULL,
 					order_created_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -34,14 +35,20 @@ class OrderDatabase():
 			cursor.execute('SELECT * FROM orders WHERE order_id = ?', (order_id,))
 			return dict(cursor.fetchone())
 		
-	def create_order(self, product:str, quantity:int):
+	def get_orders_by_user_id(self, user_id: int):
+		with self._get_connection() as connection:
+			cursor = connection.cursor()
+			cursor.execute('SELECT * FROM orders WHERE user_id = ?', (user_id,))
+			return [dict(row) for row in cursor.fetchall()]
+		
+	def create_order(self, product:str, quantity:int, user_id:int):
 		with self._get_connection() as connection:
 			try: 
 				cursor = connection.cursor()
 				cursor.execute('''
-					INSERT INTO orders (product, quantity)
-					VALUES (?, ?)
-				''', (product, quantity))
+					INSERT INTO orders (user_id, product, quantity)
+					VALUES (?, ?, ?)
+				''', (user_id, product, quantity))
 				connection.commit()
 				return cursor.lastrowid
 			except sqlite3.Error as e:
